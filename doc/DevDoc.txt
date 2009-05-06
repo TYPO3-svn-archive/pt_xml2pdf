@@ -1,0 +1,92 @@
+********************************************************************************
+DevDoc.txt: Development Notes for EXT pt_xml2pdf
+
+********************************************************************************
+
+
+
+TODO (2009-04-23):
+==================
+
+- (ry21): Add configuration for cell backgrounds (see below)
+- (ry21): Add configuration for cell / row / table borders
+- (ry21): Write DTD for XML Syntax to clearify usage
+- (ry21): Make table headers configurable (see below)
+  	
+  	 
+
+v0.0.1dev:
+----------
++ (ry21) ADD: <table> has now an attribute border. If set to 1, borders will be drawn for tables
++ (ry21) CHG: All contents are converted to ISO-8859-1 as FPDF cannot handle UTF-8
++ (ry21) ADD: Added manuel.sxw for documentation
++ (ry21) ADD: (tx_ptxml2pdf_main)Configuration for page bottom border via <document border_bottom="xyz" ...>
++ (ry21) ADD: (tx_ptxml2pdf_main)XML Syntax for rendering tables (see section "Table Rendering" below)
++ (ry21) ADD: Output method stores file with attached path if fileOutputHandling is set to "F"
++ (ry21) ADD: tx_ptxml2pdf_main::xml_pageno writes page number
++ (ry21) ADD: tx_ptxml2pdf_main::xml_pagenocell writes a cell with page number and label
++ (ry21) ADD: tx_ptxml2pdf_main::xml_setfillcolor can set background fillcolor for any cell etc.
++ (ry44) tx_ptxml2pdf_generator: 
+  + property, setter zu saveXmlFile hinzugefügt
+  + saveXmlFile steuert ob die xml-Detei auch niedergeschrieben werden soll oder nicht
++ (ry44) tx_ptxml2pdf_main
+  + Bug mit $GLOBALS['TT'] in processTemplate() behoben
+  + '\n' wird nun durch Zeilenumbrüche in allen Content-Tags ersetzt (<tag attribute="value">_content_</tag>)
+  + getPlainAttributes() static gemacht um zu verdeutlichen, dass sie kein "$this" verwendet. Sollte ausgelagert werden in eine statische Klasse  
++ (ry37) tx_ptxml2pdf_generator::renderPdf(): 
+  + $this->outputFile wird jetzt immer relativ gesetzt (wg. DB-Speicherung in tx_ptgsapdfdocs_document::storeSelf())
+  + jetzt immer Übergabe des absoluten Pfades an $pdf->Output()
+  + 3. Methoden-Parameter entfernt (jetzt obsolet)
++ (ry44) Zwei Fehler in tx_ptxml2pdf_main::__contruct() verbessert und examples hinzugefügt
++ (ry44) Content wird nun mit htmlentities() entwertet
++ (ry37) tx_ptxml2pdf_generator: Getter get_languageFile() hinzugefuegt
++ (ry37) doc/DevDoc.txt hinzugefuegt
+
+
+
+Table Rendering:
+================
+
+New XML tags have been introduced for rendering tables. Take a look at the following example:
+
+<table>
+    <!--{foreach from=$listItems item=row name="rows"}-->
+        <tr>
+        <!--{foreach name="listItems" from=$row item=value key=columnDescriptionIdentifier}-->
+            <!--{assign var="col" value=$smarty.foreach.listItems.iteration-1}-->
+            <td width="<!--{$__config.column_widths_scaled[$col]}-->"  height="3.5" align="<!--{$__config.column_alignments[$col]}-->" multi="<!--{$__config.column_multiline[$col]}-->"><!--{$value}--></td>                
+        <!--{/foreach}-->
+        </tr>
+    <!--{/foreach}-->
+</table>
+
+Problems with tables are, that multiline cells can overflow the current page. FPDF automatically inserts a page break in multiline cells, but following cells will then be put
+on the new page. Therefore, the cell heights of all cells are calculated and a page break will be inserted manually, if the page would be overflown.
+
+A function for calculating heights of multiline cells is taken from http://www.fpdf.de/downloads/addons/3/ and used for table rendering.
+
+
+
+Configuration of table headers:
+===============================
+
+* Add a TS variable "showHeaderOnEveryPage" (this must be done in pt_list!!!)
+* Add a <th> tag that can be processed by xml2pdf
+
+
+
+Borders and background colors:
+==============================
+
+* Borders have to be drawn "after" all cells are rendered
+   * Preserve cell positions in array and draw borders after all cells are rendered
+* Backgrounds have to be drawn before cells are rendered as in other case they would "overwrite" cell content 
+
+
+
+FPDF Problems:
+==============
+
+There exists a forum for questions: http://www.fpdf.org/phorum/
+One of the developers is Oliver, who responds to emails rather fast: oliver@fpdf.org
+Besides the "standard functionality" of fpdf, which is documented on http://www.fpdf.org/en/doc/index.php there exist a lot of add-ons which can be found under http://www.fpdf.de/downloads/
