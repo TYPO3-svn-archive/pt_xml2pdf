@@ -192,6 +192,11 @@ class tx_ptxml2pdf_main extends FPDI {
 	protected $currentCellAlign;
 	
 	/**
+	 * @var string  Background color of current cell
+	 */
+	protected $currentCellBgColor;
+	
+	/**
 	 * @var bool   Should table border be drawn or not
 	 */
 	protected $drawTableBorder = true;
@@ -596,27 +601,34 @@ class tx_ptxml2pdf_main extends FPDI {
 		
 		$this->initCellProperties($a);
         $this->logCellSettingsBefore();
+        if (intval($this->currentCellBgColor) > 0) {
+        	$this->SetFillColor($this->currentCellBgColor);
+        } else {
+        	$this->SetFillColor(255);
+        }
 		if ($a['multi'] == 1) {
-			// TODO make filling and border configurable
+			// TODO make border configurable
 		    $this->MultiCell(
 		        $this->currentCellWidth,      // width of cell
 		        $this->currentCellHeight,     // height of cell
 		        $c,                           // content (text) of cell
 		        0,                            // draw cell border?
 		        $this->currentCellAlign,      // align of cell 
-		        0                             // fill cell?
+		        1                             // fill cell?
 		    );
 		} else {
-			// TODO make filling and border configurable
+			// TODO make border configurable
 			$this->Cell(
 			    $this->currentCellWidth,     // width of cell
 			    $this->currentCellHeight,    // height of cell
 			    $c,                          // content (text) of cell
 			    0,                           // draw cell border?
 			    0,                           // where to go after cell is rendered
-			    $this->currentCellAlign      // align of cell
+			    $this->currentCellAlign,     // align of cell
+			    1                            // fill cell?
 			);
 		}
+		$this->SetFillColor(255);
 		$this->determineCurrentCellHeight();
 		$this->logCellPositionsAfter();
 		
@@ -691,11 +703,12 @@ class tx_ptxml2pdf_main extends FPDI {
 	protected function initCellProperties($cellAttributes) {
 		
         $this->currentTableCellPosArray = array();
-        $this->currentCellXPos = $this->GetX();
-        $this->currentCellYPos = $this->GetY();
-        $this->currentCellWidth = $cellAttributes['width'] > 0 ? $cellAttributes['width'] : 0;
-        $this->currentCellHeight = $cellAttributes['min_height'] > 0 ? $cellAttributes['min_height'] : 0;
-        $this->currentCellAlign = $cellAttributes['align'] != '' ? $cellAttributes['align'] : 'L';
+        $this->currentCellXPos      = $this->GetX();
+        $this->currentCellYPos      = $this->GetY();
+        $this->currentCellWidth     = $cellAttributes['width'] > 0 ? $cellAttributes['width'] : 0;
+        $this->currentCellHeight    = $cellAttributes['min_height'] > 0 ? $cellAttributes['min_height'] : 0;
+        $this->currentCellAlign     = $cellAttributes['align'] != '' ? $cellAttributes['align'] : 'L';
+        $this->currentCellBgColor   = $cellAttributes['bg_color'] != '' ? $cellAttributes['bg_color'] : 255;
 		
 	}
 	
@@ -730,7 +743,7 @@ class tx_ptxml2pdf_main extends FPDI {
     protected function addTablePageIfNeccessary() {
         
         /* Check whether line should start on new page */
-        if ( ($this->currentMaxCellHeight + $this->currentRowYPosition) > ($this->h - $this->bottomBorder) ) {
+        if ( ($this->currentMaxCellHeight + $this->currentRowYPosition + 1) > ($this->h - $this->bottomBorder) ) {
             $this->AddPage();
             $this->currentRowYPosition = $this->tableYStartPos;
             $this->currentRowXPos = $this->tableXStartPos;
