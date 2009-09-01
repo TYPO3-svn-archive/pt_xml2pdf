@@ -200,6 +200,16 @@ class tx_ptxml2pdf_main extends FPDI {
 	 * @var bool   Should table border be drawn or not
 	 */
 	protected $drawTableBorder = true;
+	
+	/**
+	 * @var string   Font style before table row
+	 */
+	protected $styleBeforeRow;
+	
+	/**
+     * @var string   Font style before table cell
+     */
+    protected $styleBeforeCell;
 
 
 
@@ -581,6 +591,7 @@ class tx_ptxml2pdf_main extends FPDI {
         
         $this->logRowPositions();
 		$this->SetXY($this->currentRowXPosition, $this->newRowYPosition);
+		$this->resetBeforeRowProperties();
 		
 	}
 	
@@ -631,6 +642,9 @@ class tx_ptxml2pdf_main extends FPDI {
 		$this->SetFillColor(255);
 		$this->determineCurrentCellHeight();
 		$this->logCellPositionsAfter();
+		
+		// Reset styles to styles used before cell
+		$this->resetBeforeCellProperties();
 		
 		
 	}
@@ -709,6 +723,10 @@ class tx_ptxml2pdf_main extends FPDI {
         $this->currentCellHeight    = $cellAttributes['min_height'] > 0 ? $cellAttributes['min_height'] : 0;
         $this->currentCellAlign     = $cellAttributes['align'] != '' ? $cellAttributes['align'] : 'L';
         $this->currentCellBgColor   = $cellAttributes['bg_color'] != '' ? $cellAttributes['bg_color'] : 255;
+        
+        // Set some font properties
+        $this->styleBeforeCell = $this->FontStyle;
+        $this->SetFont('', $cellAttributes['style']);
 		
 	}
 	
@@ -798,6 +816,44 @@ class tx_ptxml2pdf_main extends FPDI {
         $currentFontHeight = $this->FontSize * 3 / 8 + 2;
         $this->currentRowHeight = $rowAttributes['min_height'] > 0 ? $rowAttributes['min_height'] : $currentFontHeight;
         
+        // Set some font styles
+        $this->styleBeforeRow = $this->FontStyle;
+        $this->SetFont('', $rowAttributes['style']);
+        
+    }
+    
+    
+    
+    /**
+     * Helper method for resetting properties to
+     * 'before row styles'
+     * 
+     * @param  void
+     * @return void
+     * @author Michael Knoll <knoll@punkt.de>
+     * @since  2009-09-01
+     */
+    protected function resetBeforeRowProperties() {
+    	
+    	$this->SetFont('', $this->styleBeforeRow);
+    	
+    }
+    
+    
+    
+    /**
+     * Helper method for resetting properties to 
+     * 'before cell styles'
+     * 
+     * @param  void
+     * @return void
+     * @author Michael Knoll <knoll@punkt.de>
+     * @since  2009-09-01
+     */
+    protected function resetBeforeCellProperties() {
+    	
+    	$this->SetFont('', $this->styleBeforeCell);
+    	
     }
 
     
