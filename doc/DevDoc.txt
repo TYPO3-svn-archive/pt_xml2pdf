@@ -12,13 +12,14 @@ RFT: refactoring / code cleanup
 ********************************************************************************
 
 
-TODO (2009-04-23):
+TODO (2009-11-03):
 ==================
 - (ry21): Add configuration for cell backgrounds (see below)
 - (ry21): Add configuration for cell / row / table borders
 - (ry21): Write DTD for XML Syntax to clearify usage
 - (ry21): Make table headers configurable (see below)
 - (?): Add HTML support: there are some solutions to this: http://www.fpdf.org/en/script/index.php
+- (?): Add a xml schema for the xml syntax. This would enable fancy code completion in xml editors
   	
   	 
 
