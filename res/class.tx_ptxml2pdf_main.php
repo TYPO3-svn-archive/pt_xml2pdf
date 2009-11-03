@@ -457,7 +457,7 @@ class tx_ptxml2pdf_main extends FPDI {
 			
 			$a = $this->getPlainAttributes($cmd);
 			
-			// remeber height or set height from remembered height
+			// remember height or set height from remembered height
 			if (!empty($a['h'])) {
 				$this->lastheight = $a['h'];
 			} else {
@@ -477,6 +477,10 @@ class tx_ptxml2pdf_main extends FPDI {
 			
 			// convert to the right euro symbol TODO: check if this conversion is needed an all fonts
 			$c = str_replace(chr(164), chr(128), $c);
+			
+			// no html supported! some basic convertions
+			$c = preg_replace('/\<br(\s*)?\/?\>/i', "\n", $c);
+			$c = strip_tags($c);
 			
 		    /* Special processing for tables */
             if ($cmd->getName() == 'table') {

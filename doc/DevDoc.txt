@@ -18,6 +18,7 @@ TODO (2009-04-23):
 - (ry21): Add configuration for cell / row / table borders
 - (ry21): Write DTD for XML Syntax to clearify usage
 - (ry21): Make table headers configurable (see below)
+- (?): Add HTML support: there are some solutions to this: http://www.fpdf.org/en/script/index.php
   	
   	 
 
@@ -30,6 +31,8 @@ v0.0.2dev:
 
 v0.0.1:  [used for online project 26.10.09]
 ------
++ (fabrizio) ADD: as no HTML is supported, now <br /> will be converted in to "\n" and alle other tags will be stripped
+  + maybe we could add basic support for html. There are some solutions to this: http://www.fpdf.org/en/script/index.php
 + (fabrizio) FIX: fixed bug with multicell command: Background was always black because the parameter weren't correct
 + (ry21) ADD: <table> has now an attribute border. If set to 1, borders will be drawn for tables
 + (ry21) CHG: All contents are converted to ISO-8859-1 as FPDF cannot handle UTF-8
