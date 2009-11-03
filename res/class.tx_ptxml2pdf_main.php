@@ -1382,11 +1382,13 @@ class tx_ptxml2pdf_main extends FPDI {
 	 */
 	protected function xml_multicell(array $a, $c) {
 
-		if (!$a['y'])
+		if (!$a['y']) {
 			$a['y'] = $this->GetY();
-		if ($a['x'] && $a['y'])
+		}
+		if ($a['x'] && $a['y']) {
 			$this->SetXY($a['x'], $a['y']);
-		$this->MultiCell($a['w'], $a['h'], $c, $a['border'], $a['ln'], $a['align'], $a['fill']);
+		}
+		$this->MultiCell($a['w'], $a['h'], $c, $a['border'], $a['align'], $a['fill']);
 	}
 
 
@@ -1610,6 +1612,7 @@ class tx_ptxml2pdf_main extends FPDI {
 	
 	/**
 	 * Process the "setFillColor" command
+	 * 
 	 * @param 	array		$a		attributes
 	 * @param 	string		$c		content
 	 * @return 	void
@@ -1619,9 +1622,11 @@ class tx_ptxml2pdf_main extends FPDI {
 	protected function xml_setfillcolor(array $a, $c) {
 		tx_pttools_assert::isNotEmptyString($a['r'], array('message' => 'No "r" parameter for setfillcolor given!'));
 		if (!empty($a['g'])) {
+			// color mode defined by r,g,b
 			tx_pttools_assert::isNotEmptyString($a['b'], array('message' => 'No "b" parameter for setfillcolor given!'));
 			$this->SetFillColor($a['r'],$a['g'],$a['b']);
 		} else {
+			// gray scale mode, parameter r defines the gray tone
 			$this->SetFillColor($a['r']);
 		}
 	}
