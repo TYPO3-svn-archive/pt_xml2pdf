@@ -473,7 +473,7 @@ class tx_ptxml2pdf_main extends FPDI {
 			$c = str_replace(array_keys($replace), array_values($replace), $c);
 			
 			// converting to ISO-8859-15 (as fpdf doesn't understand utf-8)
-			$c = iconv('UTF-8', 'ISO-8859-15', $c);
+			$c = iconv('UTF-8', 'ISO-8859-15//TRANSLIT//IGNORE', $c);
 			
 			// convert to the right euro symbol TODO: check if this conversion is needed an all fonts
 			$c = str_replace(chr(164), chr(128), $c);
