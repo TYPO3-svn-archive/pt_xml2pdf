@@ -1284,7 +1284,7 @@ class tx_ptxml2pdf_main extends FPDI {
 	 */
 	protected function xml_addpage(array $a, $c) {
 
-		if ($a['iflessthan'] == 0 || ($this->GetY() > (($this->fhPt / $this->k) - $a['iflessthan']))) {
+		if ($a['iflessthan'] == 0 || ($this->GetY() > (($this->hPt / $this->k) - $a['iflessthan']))) {
 			$this->AddPage($a['orientation']);
 		}
 		
